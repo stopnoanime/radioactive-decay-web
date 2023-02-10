@@ -94,8 +94,8 @@ export class PlotComponent implements OnInit {
   }
 
   private onAxisUpdate(axis: Scale<CoreScaleOptions>) {
-    //Do not plot if difference is too small
-    if (axis.max - this.lastXMax > 0.01) {
+    //Plot when new graph section appears
+    if (axis.max > this.lastXMax) {
       this.plotPredicted(this.lastXMax, axis.max, 10);
     }
   }
@@ -127,18 +127,14 @@ export class PlotComponent implements OnInit {
 
   private plotPredicted(from: number, to: number, steps: number) {
     const step = (to - from) / steps;
-    for (let i = from; i <= to; i = this.roundFloat(i + step)) {
+    for (let i = 0; i <= steps; i++) {
       this.addPredicted(
-        i,
+        from + i * step,
         this.lastPlotData.halfLife,
         this.lastPlotData.particles
       );
-      this.lastXMax = i;
+      this.lastXMax = to;
     }
-  }
-
-  private roundFloat(n: number) {
-    return Math.round(n * 10000) / 10000;
   }
 }
 

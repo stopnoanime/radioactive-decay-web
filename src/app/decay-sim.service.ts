@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { asyncScheduler, Subject, Subscription } from 'rxjs';
+import { animationFrameScheduler, Subject, Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -68,7 +68,9 @@ export class DecaySimService {
       return;
     }
 
-    this.simSubscription = asyncScheduler.schedule(() => this.runLoop(), 10);
+    this.simSubscription = animationFrameScheduler.schedule(() =>
+      this.runLoop()
+    );
   }
 }
 
