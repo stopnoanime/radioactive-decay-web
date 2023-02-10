@@ -68,7 +68,7 @@ export class DecaySimService {
       return;
     }
 
-    this.simSubscription = asyncScheduler.schedule(() => this.runLoop(), 25);
+    this.simSubscription = asyncScheduler.schedule(() => this.runLoop(), 10);
   }
 }
 

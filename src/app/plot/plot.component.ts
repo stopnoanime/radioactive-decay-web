@@ -3,7 +3,7 @@ import { ChartConfiguration, ChartData } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { Subject } from 'rxjs';
 import { dataPointType } from '../decay-sim.service';
-import { Chart } from 'chart.js';
+import { Chart, Scale, CoreScaleOptions } from 'chart.js';
 import AnnotationPlugin from 'chartjs-plugin-annotation';
 
 @Component({
@@ -12,7 +12,7 @@ import AnnotationPlugin from 'chartjs-plugin-annotation';
   styleUrls: ['./plot.component.scss'],
 })
 export class PlotComponent implements OnInit {
-  @Input() startNewPlot!: Subject<newPlotDatType>;
+  @Input() startNewPlot!: Subject<newPlotDataType>;
   @Input() newRealDataPoint!: Subject<dataPointType>;
   @Input() numberOfHalfTimesToDisplay = 6;
 
@@ -21,6 +21,8 @@ export class PlotComponent implements OnInit {
   private predictedData: dataArray = [];
   private trueData: dataArray = [];
   private annotations: any = {};
+  private lastXMax = Infinity;
+  private lastPlotData!: newPlotDataType;
 
   public chartOptions: ChartConfiguration['options'] = {
     responsive: true,
@@ -30,11 +32,10 @@ export class PlotComponent implements OnInit {
         type: 'linear',
         position: 'bottom',
         min: 0,
-        max: 10,
+        afterUpdate: (axis) => this.onAxisUpdate(axis),
       },
       y: {
         min: 0,
-        max: 10,
       },
     },
     elements: {
@@ -71,46 +72,73 @@ export class PlotComponent implements OnInit {
 
   ngOnInit() {
     this.startNewPlot.subscribe((v) => {
+      this.lastPlotData = v;
       this.predictedData.length = 0;
       this.trueData.length = 0;
 
       const totalGraphTime = v.halfLife * this.numberOfHalfTimesToDisplay;
-
-      (<any>this.chartOptions).scales['x'].max = totalGraphTime;
-      (<any>this.chartOptions).scales['y'].max = v.particles;
+      (<any>this.chartOptions).scales['x'].suggestedMax = totalGraphTime;
 
       //Generate predicted decay graph with 100 data points
-      for (let i = 0; i <= totalGraphTime + 0.1; i += totalGraphTime / 100) {
-        this.predictedData.push({
-          x: i,
-          y: v.particles / Math.pow(2, i / v.halfLife),
-        });
-      }
+      this.plotPredicted(0, totalGraphTime, 100);
 
       this.chart?.ngOnChanges({});
     });
 
     this.newRealDataPoint.subscribe((v) => {
       this.trueData.push({ x: v.time / 1000, y: v.particles });
-
-      this.annotations.vertLine = {
-        type: 'line',
-        xMin: v.time / 1000,
-        xMax: v.time / 1000,
-        borderColor: '#ff6384',
-        borderWidth: 1,
-      };
-
-      this.annotations.horLine = {
-        type: 'line',
-        yMin: v.particles,
-        yMax: v.particles,
-        borderColor: '#ff6384',
-        borderWidth: 1,
-      };
+      this.addLines(v.time / 1000, v.particles);
 
       this.chart?.ngOnChanges({});
     });
+  }
+
+  private onAxisUpdate(axis: Scale<CoreScaleOptions>) {
+    //Do not plot if difference is too small
+    if (axis.max - this.lastXMax > 0.01) {
+      this.plotPredicted(this.lastXMax, axis.max, 10);
+    }
+  }
+
+  private addLines(x: number, y: number) {
+    this.annotations.vertLine = {
+      type: 'line',
+      xMin: x,
+      xMax: x,
+      borderColor: '#ff6384',
+      borderWidth: 1,
+    };
+
+    this.annotations.horLine = {
+      type: 'line',
+      yMin: y,
+      yMax: y,
+      borderColor: '#ff6384',
+      borderWidth: 1,
+    };
+  }
+
+  private addPredicted(time: number, halfLife: number, particles: number) {
+    this.predictedData.push({
+      x: time,
+      y: particles / Math.pow(2, time / halfLife),
+    });
+  }
+
+  private plotPredicted(from: number, to: number, steps: number) {
+    const step = (to - from) / steps;
+    for (let i = from; i <= to; i = this.roundFloat(i + step)) {
+      this.addPredicted(
+        i,
+        this.lastPlotData.halfLife,
+        this.lastPlotData.particles
+      );
+      this.lastXMax = i;
+    }
+  }
+
+  private roundFloat(n: number) {
+    return Math.round(n * 10000) / 10000;
   }
 }
 
@@ -119,4 +147,4 @@ type dataArray = {
   y: number;
 }[];
 
-export type newPlotDatType = { halfLife: number; particles: number };
+export type newPlotDataType = { halfLife: number; particles: number };
