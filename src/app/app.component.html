@@ -1,1 +1,40 @@
-<span class="text-xl">Hello</span>
+<button
+  mat-raised-button
+  color="primary"
+  (click)="startStop()"
+  [disabled]="!inputForm.valid"
+>
+  {{ sim.running ? "Stop" : "Start" }}
+</button>
+{{ sim.particles }}
+
+<form [formGroup]="inputForm">
+  <mat-form-field>
+    <mat-label>Number of particles</mat-label>
+    <input
+      matInput
+      type="number"
+      min="1"
+      max="100000"
+      value="1000"
+      formControlName="particles"
+    />
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Substance half life</mat-label>
+    <input
+      matInput
+      type="number"
+      min="1"
+      max="1000"
+      value="10"
+      formControlName="halfLife"
+    />
+  </mat-form-field>
+</form>
+
+<app-plot
+  [newRealDataPoint]="sim.newDataPointEvent"
+  [startNewPlot]="startNewPlot"
+></app-plot>
