@@ -12,6 +12,7 @@ import { dataPointType } from '../decay-sim.service';
 export class PlotComponent implements OnInit {
   @Input() startNewPlot!: Subject<newPlotDatType>;
   @Input() newRealDataPoint!: Subject<dataPointType>;
+  @Input() numberOfHalfTimesToDisplay = 6;
 
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
 
@@ -33,19 +34,24 @@ export class PlotComponent implements OnInit {
         max: 10,
       },
     },
+    elements: {
+      point: {
+        radius: 0,
+      },
+    },
   };
 
   public chartData: ChartData<'line'> = {
     datasets: [
       {
-        label: 'Predicted decay',
-        tension: 0.4,
-        data: this.predictedData,
-      },
-      {
         label: 'True decay',
         tension: 0.4,
         data: this.trueData,
+      },
+      {
+        label: 'Predicted decay',
+        tension: 0.4,
+        data: this.predictedData,
       },
     ],
   };
@@ -55,8 +61,18 @@ export class PlotComponent implements OnInit {
       this.predictedData.length = 0;
       this.trueData.length = 0;
 
-      (<any>this.chartOptions).scales['x'].max = v.halfLife * 6;
+      const totalGraphTime = v.halfLife * this.numberOfHalfTimesToDisplay;
+
+      (<any>this.chartOptions).scales['x'].max = totalGraphTime;
       (<any>this.chartOptions).scales['y'].max = v.particles;
+
+      //Generate predicted decay graph with 100 data points
+      for (let i = 0; i <= totalGraphTime + 0.1; i += totalGraphTime / 100) {
+        this.predictedData.push({
+          x: i,
+          y: v.particles / Math.pow(2, i / v.halfLife),
+        });
+      }
 
       this.chart?.ngOnChanges({});
     });
