@@ -3,6 +3,8 @@ import { ChartConfiguration, ChartData } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { Subject } from 'rxjs';
 import { dataPointType } from '../decay-sim.service';
+import { Chart } from 'chart.js';
+import AnnotationPlugin from 'chartjs-plugin-annotation';
 
 @Component({
   selector: 'app-plot',
@@ -18,6 +20,7 @@ export class PlotComponent implements OnInit {
 
   private predictedData: dataArray = [];
   private trueData: dataArray = [];
+  private annotations: any = {};
 
   public chartOptions: ChartConfiguration['options'] = {
     responsive: true,
@@ -39,6 +42,12 @@ export class PlotComponent implements OnInit {
         radius: 0,
       },
     },
+
+    plugins: {
+      annotation: {
+        annotations: this.annotations,
+      },
+    },
   };
 
   public chartData: ChartData<'line'> = {
@@ -55,6 +64,10 @@ export class PlotComponent implements OnInit {
       },
     ],
   };
+
+  constructor() {
+    Chart.register(AnnotationPlugin);
+  }
 
   ngOnInit() {
     this.startNewPlot.subscribe((v) => {
@@ -79,7 +92,24 @@ export class PlotComponent implements OnInit {
 
     this.newRealDataPoint.subscribe((v) => {
       this.trueData.push({ x: v.time / 1000, y: v.particles });
-      this.chart?.update();
+
+      this.annotations.vertLine = {
+        type: 'line',
+        xMin: v.time / 1000,
+        xMax: v.time / 1000,
+        borderColor: '#ff6384',
+        borderWidth: 1,
+      };
+
+      this.annotations.horLine = {
+        type: 'line',
+        yMin: v.particles,
+        yMax: v.particles,
+        borderColor: '#ff6384',
+        borderWidth: 1,
+      };
+
+      this.chart?.ngOnChanges({});
     });
   }
 }
