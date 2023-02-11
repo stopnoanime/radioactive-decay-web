@@ -8,9 +8,16 @@ import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PlotComponent } from './plot/plot.component';
 import { NgChartsModule } from 'ng2-charts';
+import { InputMenuComponent } from './input-menu/input-menu.component';
+import { HeaderComponent } from './header/header.component';
 
 @NgModule({
-  declarations: [AppComponent, PlotComponent],
+  declarations: [
+    AppComponent,
+    PlotComponent,
+    InputMenuComponent,
+    HeaderComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

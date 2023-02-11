@@ -25,13 +25,13 @@ export class DecaySimService {
   private startTime!: number;
 
   /**
-   * @param halfTime Substance half time in milliseconds
+   * @param halfTime Substance half time in seconds
    * @param particles Number of particles to start simulation with
    */
   public start(halfTime: number, particles: number) {
     if (this._running) return;
 
-    this.lifetime = halfTime / Math.log(2);
+    this.lifetime = (halfTime * 1000) / Math.log(2);
     this._particles = particles;
 
     this._running = true;

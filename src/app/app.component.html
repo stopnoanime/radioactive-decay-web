@@ -1,41 +1,18 @@
-<button
-  mat-raised-button
-  color="primary"
-  (click)="startStop()"
-  [disabled]="!inputForm.valid"
+<div
+  class="h-screen p-8 bg-neutral-100 grid gap-8"
+  style="grid-template-rows: auto 1fr"
 >
-  {{ sim.running ? "Stop" : "Start" }}
-</button>
-{{ sim.particles }}
+  <app-header
+    (start)="
+      startNewPlot.next($event); sim.start($event.halfLife, $event.particles)
+    "
+    (stop)="sim.stop()"
+    [running]="sim.running"
+    [newRealDataPoint]="sim.newDataPointEvent"
+  ></app-header>
 
-<form [formGroup]="inputForm">
-  <mat-form-field>
-    <mat-label>Number of particles</mat-label>
-    <input
-      matInput
-      type="number"
-      min="1"
-      max="100000"
-      value="1000"
-      formControlName="particles"
-    />
-  </mat-form-field>
-
-  <mat-form-field>
-    <mat-label>Substance half life</mat-label>
-    <input
-      matInput
-      type="number"
-      min="0.1"
-      max="1000"
-      value="10"
-      step="0.1"
-      formControlName="halfLife"
-    />
-  </mat-form-field>
-</form>
-
-<app-plot
-  [newRealDataPoint]="sim.newDataPointEvent"
-  [startNewPlot]="startNewPlot"
-></app-plot>
+  <app-plot
+    [newRealDataPoint]="sim.newDataPointEvent"
+    [startNewPlot]="startNewPlot"
+  ></app-plot>
+</div>

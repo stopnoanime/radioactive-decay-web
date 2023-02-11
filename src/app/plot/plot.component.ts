@@ -32,10 +32,19 @@ export class PlotComponent implements OnInit {
         type: 'linear',
         position: 'bottom',
         min: 0,
+        ticks: {},
+        title: {
+          display: true,
+          text: 'Time (s)',
+        },
         afterUpdate: (axis) => this.onAxisUpdate(axis),
       },
       y: {
         min: 0,
+        title: {
+          display: true,
+          text: 'Number of particles',
+        },
       },
     },
     elements: {
@@ -77,7 +86,8 @@ export class PlotComponent implements OnInit {
       this.trueData.length = 0;
 
       const totalGraphTime = v.halfLife * this.numberOfHalfTimesToDisplay;
-      (<any>this.chartOptions).scales['x'].suggestedMax = totalGraphTime;
+      (<any>this.chartOptions).scales.x.suggestedMax = totalGraphTime;
+      (<any>this.chartOptions).scales.x.ticks.stepSize = v.halfLife;
 
       //Generate predicted decay graph with 100 data points
       this.plotPredicted(0, totalGraphTime, 100);
