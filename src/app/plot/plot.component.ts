@@ -26,6 +26,7 @@ export class PlotComponent implements OnInit {
 
   public chartOptions: ChartConfiguration['options'] = {
     responsive: true,
+    maintainAspectRatio: false,
     animation: false,
     scales: {
       x: {

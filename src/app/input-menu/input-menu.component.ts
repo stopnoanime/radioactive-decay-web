@@ -10,7 +10,7 @@ import { newPlotDataType } from '../plot/plot.component';
 export class InputMenuComponent {
   inputForm = this.fb.group({
     particles: [1000],
-    halfLife: [10],
+    halfLife: [1],
   });
 
   _running = false;

@@ -10,6 +10,7 @@ import { PlotComponent } from './plot/plot.component';
 import { NgChartsModule } from 'ng2-charts';
 import { InputMenuComponent } from './input-menu/input-menu.component';
 import { HeaderComponent } from './header/header.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { HeaderComponent } from './header/header.component';
     MatInputModule,
     ReactiveFormsModule,
     NgChartsModule,
+    MatTooltipModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
