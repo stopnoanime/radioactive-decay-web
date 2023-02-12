@@ -1,0 +1,12 @@
+<div class="w-full h-full bg-neutral-200 p-4 rounded-xl flex flex-col gap-4">
+  <h2 class="text-2xl text-center font-light">Particles Visualization</h2>
+  <svg viewBox="0 0 1 1" class="w-full h-full overflow-visible">
+    <circle
+      *ngFor="let particle of particles"
+      [attr.cx]="particle.x"
+      [attr.cy]="particle.y"
+      [attr.fill]="particle.decayed ? '#ff6384' : '#36a2eb'"
+      r="0.015"
+    />
+  </svg>
+</div>

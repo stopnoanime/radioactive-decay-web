@@ -1,0 +1,11 @@
+.grid-layout {
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 1fr;
+}
+
+@screen lg {
+  .grid-layout {
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 2fr 1fr;
+  }
+}

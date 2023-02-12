@@ -1,8 +1,6 @@
-<div
-  class="h-screen p-8 bg-neutral-100 grid gap-8"
-  style="grid-template-rows: auto 1fr"
->
+<div class="min-h-screen p-8 bg-neutral-100 grid gap-8 grid-layout">
   <app-header
+    class="lg:col-span-2"
     (start)="
       startNewPlot.next($event); sim.start($event.halfLife, $event.particles)
     "
@@ -17,4 +15,9 @@
     [newRealDataPoint]="sim.newDataPointEvent"
     [startNewPlot]="startNewPlot"
   ></app-plot>
+
+  <app-visualize
+    [numberOfParticles]="sim.particles"
+    [startNewPlot]="startNewPlot"
+  ></app-visualize>
 </div>

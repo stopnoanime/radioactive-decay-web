@@ -11,6 +11,7 @@ import { NgChartsModule } from 'ng2-charts';
 import { InputMenuComponent } from './input-menu/input-menu.component';
 import { HeaderComponent } from './header/header.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { VisualizeComponent } from './visualize/visualize.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     PlotComponent,
     InputMenuComponent,
     HeaderComponent,
+    VisualizeComponent,
   ],
   imports: [
     BrowserModule,
