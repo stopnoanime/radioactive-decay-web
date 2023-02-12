@@ -1,0 +1,8 @@
+canvas {
+  height: 0 !important;
+  flex: 1 1 0;
+}
+
+:host {
+  overflow-x: hidden;
+}

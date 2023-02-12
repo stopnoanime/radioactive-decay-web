@@ -1,21 +1,23 @@
-<div class="flex items-center gap-4 bg-neutral-200 p-4 rounded-xl flex-wrap">
-  <app-input-menu
-    [running]="running"
-    (start)="start.emit($event); ranAtLeastOnce = true"
-    (stop)="stop.emit()"
-  ></app-input-menu>
+<div class="flex gap-4 bg-neutral-200 p-4 rounded-xl">
+  <div class="flex gap-4 flex-wrap items-center">
+    <app-input-menu
+      [running]="running"
+      (start)="start.emit($event); ranAtLeastOnce = true"
+      (stop)="stop.emit()"
+    ></app-input-menu>
 
-  <div *ngIf="ranAtLeastOnce" class="text-neutral-800 flex gap-4 font-light">
-    <span> Particles Left: {{ (newRealDataPoint | async)?.particles }} </span>
-    <span>
-      Simulation Time:
-      {{ (newRealDataPoint | async)?.time | date : "ss:SSS" }}
-    </span>
+    <div *ngIf="ranAtLeastOnce" class="text-neutral-800 flex gap-4 font-light">
+      <span> Particles Left: {{ (newRealDataPoint | async)?.particles }} </span>
+      <span>
+        Simulation Time:
+        {{ (newRealDataPoint | async)?.time | date : "ss:SSS" }}
+      </span>
+    </div>
   </div>
 
   <a
     href="https://github.com/stopnoanime/radioactive-decay-web"
-    class="inline-block ml-auto"
+    class="inline-block ml-auto mt-2"
     matTooltip="Check out the repository"
   >
     <svg
