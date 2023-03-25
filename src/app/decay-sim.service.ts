@@ -22,7 +22,7 @@ export class DecaySimService {
 
   private simSubscription!: Subscription;
   private lastTime!: number;
-  private startTime!: number;
+  private simulationTime!: number;
 
   /**
    * @param halfTime Substance half time in seconds
@@ -35,7 +35,8 @@ export class DecaySimService {
     this._particles = particles;
 
     this._running = true;
-    this.lastTime = this.startTime = Date.now();
+    this.simulationTime = 0;
+    this.lastTime = Date.now();
     this.runLoop();
   }
 
@@ -46,8 +47,12 @@ export class DecaySimService {
 
   private runLoop() {
     const currentTime = Date.now();
-    const deltaTime = currentTime - this.lastTime;
+
+    //Limit deltaTime to 0.05s, useful if user leaves page during animation
+    const deltaTime = Math.min(currentTime - this.lastTime, 1000 / 20);
+
     this.lastTime = currentTime;
+    this.simulationTime += deltaTime;
 
     const decayProbability = deltaTime / this.lifetime;
 
@@ -59,7 +64,7 @@ export class DecaySimService {
     }
 
     this.newDataPointEvent.next({
-      time: currentTime - this.startTime,
+      time: this.simulationTime,
       particles: this.particles,
     });
 
