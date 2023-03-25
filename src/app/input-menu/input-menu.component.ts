@@ -27,12 +27,7 @@ export class InputMenuComponent {
   startStop() {
     if (this._running) this.stop.emit();
     else {
-      if (
-        !this.inputForm.valid ||
-        !this.inputForm.value.halfLife ||
-        !this.inputForm.value.particles
-      )
-        return;
+      if (!this.inputForm.valid) return;
 
       this.start.emit(this.inputForm.value as newPlotDataType);
     }
