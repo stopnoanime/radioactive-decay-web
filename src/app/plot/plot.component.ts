@@ -1,7 +1,7 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ChartConfiguration, ChartData } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { dataPointType } from '../decay-sim.service';
 import { Chart, Scale, CoreScaleOptions } from 'chart.js';
 import AnnotationPlugin from 'chartjs-plugin-annotation';
@@ -11,7 +11,7 @@ import AnnotationPlugin from 'chartjs-plugin-annotation';
   templateUrl: './plot.component.html',
   styleUrls: ['./plot.component.scss'],
 })
-export class PlotComponent implements OnInit {
+export class PlotComponent implements OnInit, OnDestroy {
   @Input() startNewPlot!: Subject<newPlotDataType>;
   @Input() newRealDataPoint!: Subject<dataPointType>;
   @Input() numberOfHalfTimesToDisplay = 6;
@@ -23,6 +23,9 @@ export class PlotComponent implements OnInit {
   private annotations: any = {};
   private lastXMax = Infinity;
   private lastPlotData!: newPlotDataType;
+
+  private startNewPlotSubscription?: Subscription;
+  private newRealDataPointSubscription?: Subscription;
 
   public chartOptions: ChartConfiguration['options'] = {
     responsive: true,
@@ -81,7 +84,7 @@ export class PlotComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.startNewPlot.subscribe((v) => {
+    this.startNewPlotSubscription = this.startNewPlot.subscribe((v) => {
       this.lastPlotData = v;
       this.predictedData.length = 0;
       this.trueData.length = 0;
@@ -96,12 +99,17 @@ export class PlotComponent implements OnInit {
       this.chart?.ngOnChanges({});
     });
 
-    this.newRealDataPoint.subscribe((v) => {
+    this.newRealDataPointSubscription = this.newRealDataPoint.subscribe((v) => {
       this.trueData.push({ x: v.time / 1000, y: v.particles });
       this.addLines(v.time / 1000, v.particles);
 
       this.chart?.ngOnChanges({});
     });
+  }
+
+  ngOnDestroy(): void {
+    this.startNewPlotSubscription?.unsubscribe();
+    this.newRealDataPointSubscription?.unsubscribe();
   }
 
   private onAxisUpdate(axis: Scale<CoreScaleOptions>) {

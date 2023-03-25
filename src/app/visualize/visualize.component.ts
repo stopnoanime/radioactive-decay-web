@@ -2,11 +2,12 @@ import {
   Component,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   SimpleChange,
   SimpleChanges,
 } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { newPlotDataType } from '../plot/plot.component';
 
 @Component({
@@ -14,7 +15,7 @@ import { newPlotDataType } from '../plot/plot.component';
   templateUrl: './visualize.component.html',
   styleUrls: ['./visualize.component.scss'],
 })
-export class VisualizeComponent implements OnChanges, OnInit {
+export class VisualizeComponent implements OnChanges, OnInit, OnDestroy {
   lastDecayedParticleIndex = 0;
   particlesMultiplier = 1;
   particles: { x: number; y: number; decayed: boolean }[] = [];
@@ -23,15 +24,19 @@ export class VisualizeComponent implements OnChanges, OnInit {
   @Input() numberOfParticles!: number;
   @Input() maxNumberOfParticles: number = 250;
 
+  private startNewPlotSubscription?: Subscription;
+
   ngOnInit() {
-    this.startNewPlot.subscribe((v) => {
+    this.startNewPlotSubscription = this.startNewPlot.subscribe((v) => {
       this.particles = [
         ...Array(Math.min(v.particles, this.maxNumberOfParticles)),
       ].map((_) => ({ x: Math.random(), y: Math.random(), decayed: false }));
+
       this.particlesMultiplier =
         v.particles > this.maxNumberOfParticles
           ? this.maxNumberOfParticles / v.particles
           : 1;
+
       this.lastDecayedParticleIndex = 0;
     });
   }
@@ -40,6 +45,10 @@ export class VisualizeComponent implements OnChanges, OnInit {
     if (!changes['numberOfParticles']) return;
 
     this.markDecayedParticles(changes['numberOfParticles'].currentValue);
+  }
+
+  ngOnDestroy(): void {
+    this.startNewPlotSubscription?.unsubscribe();
   }
 
   markDecayedParticles(notDecayedParticles: number) {
