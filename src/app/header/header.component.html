@@ -7,8 +7,11 @@
     ></app-input-menu>
 
     <div *ngIf="ranAtLeastOnce" class="text-neutral-800 flex gap-4 font-light">
-      <span> Particles Left: {{ (newRealDataPoint | async)?.particles }} </span>
-      <span>
+      <span data-test="particles">
+        Particles Left:
+        {{ (newRealDataPoint | async)?.particles }}
+      </span>
+      <span data-test="time">
         Simulation Time:
         {{ (newRealDataPoint | async)?.time | date : "ss:SSS" }}
       </span>
