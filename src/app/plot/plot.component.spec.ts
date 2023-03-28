@@ -64,16 +64,18 @@ describe('PlotComponent', () => {
   });
 
   it('should cleanup old true data on new plot', () => {
-    component.startNewPlot.next({ halfLife: 1, particles: 1000 });
-
     //Old data that should be deleted:
-    component.newRealDataPoint.next({ time: 0, particles: 1000 });
-    component.newRealDataPoint.next({ time: 100, particles: 500 });
+    component.startNewPlot.next({ halfLife: 1, particles: 1000 });
+    component.newRealDataPoint.next({ time: 0, particles: 0 });
+    component.newRealDataPoint.next({ time: 0, particles: 0 });
 
+    expect(component.predictedData[0].y).toBe(1000);
     expect(component.trueData.length).toBe(2);
 
-    component.startNewPlot.next({ halfLife: 1, particles: 1000 });
+    component.startNewPlot.next({ halfLife: 1, particles: 100 });
 
+    //Old data should be replaced with new data
+    expect(component.predictedData[0].y).toBe(100);
     expect(component.trueData.length).toBe(0);
   });
 });

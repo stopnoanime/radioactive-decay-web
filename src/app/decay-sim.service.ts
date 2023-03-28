@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { animationFrameScheduler, Subject, Subscription } from 'rxjs';
+import { newPlotDataType } from './plot/plot.component';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,7 @@ export class DecaySimService {
   }
 
   public newDataPointEvent = new Subject<dataPointType>();
+  public startNewPlotEvent = new Subject<newPlotDataType>();
 
   /** Particle lifetime in milliseconds */
   private lifetime = 0;
@@ -30,6 +32,9 @@ export class DecaySimService {
    */
   public start(halfTime: number, particles: number) {
     if (this._running) return;
+
+    // Notify components of start
+    this.startNewPlotEvent.next({ halfLife: halfTime, particles: particles });
 
     this.lifetime = (halfTime * 1000) / Math.log(2);
     this._particles = particles;

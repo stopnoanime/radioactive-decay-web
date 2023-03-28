@@ -1,9 +1,7 @@
 <div class="min-h-screen p-4 gap-4 lg:p-8 lg:gap-8 grid grid-layout">
   <app-header
     class="lg:col-span-2"
-    (start)="
-      startNewPlot.next($event); sim.start($event.halfLife, $event.particles)
-    "
+    (start)="sim.start($event.halfLife, $event.particles)"
     (stop)="sim.stop()"
     [running]="sim.running"
     [newRealDataPoint]="sim.newDataPointEvent"
@@ -11,11 +9,11 @@
 
   <app-plot
     [newRealDataPoint]="sim.newDataPointEvent"
-    [startNewPlot]="startNewPlot"
+    [startNewPlot]="sim.startNewPlotEvent"
   ></app-plot>
 
   <app-visualize
     [numberOfParticles]="sim.particles"
-    [startNewPlot]="startNewPlot"
+    [startNewPlot]="sim.startNewPlotEvent"
   ></app-visualize>
 </div>
