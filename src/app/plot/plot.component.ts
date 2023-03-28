@@ -15,12 +15,13 @@ export class PlotComponent implements OnInit, OnDestroy {
   @Input() startNewPlot!: Subject<newPlotDataType>;
   @Input() newRealDataPoint!: Subject<dataPointType>;
   @Input() numberOfHalfTimesToDisplay = 6;
+  @Input() predictedGraphResolution = 100;
 
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
 
-  private predictedData: dataArray = [];
-  private trueData: dataArray = [];
-  private annotations: any = {};
+  public predictedData: dataArray = [];
+  public trueData: dataArray = [];
+  public annotations: any = {};
   private lastXMax = Infinity;
   private lastPlotData!: newPlotDataType;
 
@@ -93,8 +94,7 @@ export class PlotComponent implements OnInit, OnDestroy {
       (<any>this.chartOptions).scales.x.suggestedMax = totalGraphTime;
       (<any>this.chartOptions).scales.x.ticks.stepSize = v.halfLife;
 
-      //Generate predicted decay graph with 100 data points
-      this.plotPredicted(0, totalGraphTime, 100);
+      this.plotPredicted(0, totalGraphTime, this.predictedGraphResolution);
 
       this.chart?.ngOnChanges({});
     });
@@ -115,7 +115,11 @@ export class PlotComponent implements OnInit, OnDestroy {
   private onAxisUpdate(axis: Scale<CoreScaleOptions>) {
     //Plot when new graph section appears
     if (axis.max > this.lastXMax) {
-      this.plotPredicted(this.lastXMax, axis.max, 10);
+      this.plotPredicted(
+        this.lastXMax,
+        axis.max,
+        this.predictedGraphResolution / 10
+      );
     }
   }
 
@@ -157,7 +161,7 @@ export class PlotComponent implements OnInit, OnDestroy {
   }
 }
 
-type dataArray = {
+export type dataArray = {
   x: number;
   y: number;
 }[];
